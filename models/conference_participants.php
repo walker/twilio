@@ -13,10 +13,26 @@
 class ConferenceParticipants extends TwilioAppModel {
 	public $name = 'ConferenceParticipants';
 	public $twilioSchema = array(
-	
 	);
 	public $twilioSettings = array(
-	
+		'read' => array(
+			'allowed' => true,
+			'path' => '/Conferences/%s/Participants/%s',
+			'date' => false,
+			'query' => array('Muted')
+		),
+		'create' => array(
+			'allowed' => false
+		),
+		'update' => array(
+			'allowed' => true,
+			'path' => '/Conferences/%s/Participants/%s',
+			'data' => array('Muted'),
+			'query' => false
+		),
+		'delete' => array(
+			'allowed' => false
+		)
 	);
 }
 ?>

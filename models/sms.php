@@ -16,7 +16,24 @@ class Sms extends TwilioAppModel {
 	
 	);
 	public $twilioSettins = array(
-	
+		'read' => array(
+			'allowed' => true,
+			'path' => '/SMS/Messages/%s',
+			'data' => false,
+			'query' => array('To', 'From', 'DateSent')
+		),
+		'create' => array(
+			'allowed' => true,
+			'path' => '/SMS/Messages',
+			'data' => array('From', 'To', 'Body', 'StatusCallback'),
+			'query' => false
+		),
+		'update' => array(
+			'allowed' => false
+		),
+		'delete' => array(
+			'allowed' => false
+		)
 	);
 }
 ?>

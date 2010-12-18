@@ -12,11 +12,24 @@
  **/
 class Conferences extends TwilioAppModel {
 	public $name = 'Conferences';
-	public $twilioSchema = array(
-	
+	public $twilioSchema = array(	
 	);
 	public $twilioSettings = array(
-	
+		'read' => array(
+			'allowed' => true,
+			'path' => '/Conferences/%s',
+			'data' => false,
+			'query' => array('Status', 'FriendlyName', 'DateCreated', 'DateUpdated')
+		),
+		'create' => array(
+			'allowed' => false
+		),
+		'update' => array(
+			'allowed' => false
+		),
+		'delete' => array(
+			'allowed' => false
+		)
 	);
 }
 ?>

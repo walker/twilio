@@ -16,7 +16,27 @@ class OutgoingCallerIds extends TwilioAppModel {
 	
 	);
 	public $twilioSettings = array(
-	
+		'read' => array(
+			'allowed' => true,
+			'path' => '/OutgoingCallerIds',
+			'data' => false,
+			'query' => array('PhoneNumber', 'FriendlyName')
+		),
+		'create' => array(
+			'allowed' => true,
+			'path' => '/OutgoingCallerIds',
+			'data' => array('PhoneNumber','FriendlyName','CallDelay','Extension'),
+			'query' => false
+		),
+		'update' => array(
+			'allowed' => true,
+			'path' => '/OutgoingCallerIds/%s',
+			'data' => array('FriendlyName'),
+			'query' => false
+		),
+		'delete' => array(
+			'allowed' => false
+		)
 	);
 }
 ?>

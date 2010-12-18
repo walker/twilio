@@ -13,10 +13,26 @@
 class Accounts extends TwilioAppModel {
 	public $name = 'Accounts';
 	public $twilioSchema = array(
-	
 	);
 	public $twilioSettings = array(
-	
+		'read' => array(
+			'allowed' => true
+			'path' => '/Accounts/%s'
+			'data' => false,
+			'query' => false
+		),
+		'create' => array(
+			'allowed' => false
+		),
+		'update' => array(
+			'allowed' => true
+			'path' => '/Accounts/%s'
+			'data' => array('FriendlyName'),
+			'query' => false
+		),
+		'delete' => array(
+			'allowed' => false
+		)
 	);
 }
 ?>

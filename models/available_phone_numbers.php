@@ -13,10 +13,23 @@
 class AvailablePhoneNumbers extends TwilioAppModel {
 	public $name = 'AvailablePhoneNumbers';
 	public $twilioSchema = array(
-	
 	);
 	public $twilioSettings = array(
-	
+		'read' => array(
+			'allowed' => true,
+			'path' => '/AvailablePhoneNumbers/US/Local',
+			'data' => false,
+			'query' => array('AreaCode','Contains','InRegion','InPostalCode','NearLatLong','NearNumber','InLata','InRateCenter','Distance')
+		),
+		'create' => array(
+			'allowed' => false
+		),
+		'update' => array(
+			'allowed' => false
+		),
+		'delete' => array(
+			'allowed' => false
+		)
 	);
 }
 ?>

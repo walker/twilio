@@ -16,7 +16,30 @@ class IncomingPhoneNumbers extends TwilioAppModel {
 	
 	);
 	public $twilioSettings = array(
-	
+		'read' => array(
+			'allowed' => true,
+			'path' => '/IncomingPhoneNumbers',
+			'data' => false,
+			'query' => array('PhoneNumber', 'FriendlyName')
+		),
+		'create' => array(
+			'allowed' => true,
+			'path' => '/IncomingPhoneNumbers',
+			'data' => array('PhoneNumber', 'AreaCode', 'FriendlyName', 'VoiceUrl', 'VoiceMethod', 'VoiceFallbackUrl', 'VoiceFallbackMethod', 'StatusCallback', 'StatusCallbackMethod', 'SmsUrl', 'SmsFallbackMethod', 'VoiceCallerIdLookup'),
+			'query' => false
+		),
+		'update' => array(
+			'allowed' => true,
+			'path' => '/IncomingPhoneNumbers/%s',
+			'data' => array('PhoneNumber', 'ApiVersion', 'AreaCode', 'FriendlyName', 'VoiceUrl', 'VoiceMethod', 'VoiceFallbackUrl', 'VoiceFallbackMethod', 'StatusCallback', 'StatusCallbackMethod', 'SmsUrl', 'SmsFallbackMethod', 'VoiceCallerIdLookup'),
+			'query' => false
+		),
+		'delete' => array(
+			'allowed' => true,
+			'path' => '/IncomingPhoneNumbers/%s',
+			'data' => false,
+			'query' => false
+		)
 	);
 }
 ?>

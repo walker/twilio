@@ -16,7 +16,27 @@ class Calls extends TwilioAppModel {
 	
 	);
 	public $twilioSettings = array(
-	
+		'read' => array(
+			'allowed' => true,
+			'path' => '/Calls/%s',
+			'data' => false,
+			'query' => array('To', 'From', 'Status', 'StartTime', 'EndTime')
+		),
+		'create' => array(
+			'allowed' => true,
+			'path' => '/Calls',
+			'data' => array('To', 'From', 'Url', 'Method', 'FallbackUrl', 'FallbackMethod', 'StatusCallback', 'StatusCallbackMethod', 'SendDigits', 'IfMachine', 'Timeout'),
+			'query' => false
+		),
+		'update' => array(
+			'allowed' => true,
+			'path' => '/Calls/%s',
+			'data' => array('Url', 'Method', 'Status'),
+			'query' => false
+		),
+		'delete' => array(
+			'allowed' => false
+		)
 	);
 }
 ?>

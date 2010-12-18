@@ -16,7 +16,18 @@ class Sandbox extends TwilioAppModel {
 	
 	);
 	public $twilioSettings = array(
-	
+		'read' => array(
+			'allowed' => true
+		),
+		'create' => array(
+			'allowed' => false
+		),
+		'update' => array(
+			'allowed' => true
+		),
+		'delete' => array(
+			'allowed' => false
+		)
 	);
 }
 ?>
