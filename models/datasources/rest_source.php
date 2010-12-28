@@ -32,7 +32,7 @@
  *     'username' => 'username',
  *     'password' => 'password',
  *     'dataType' => '(json|xml)',
- *     'basePath' => '/Accounts/<sid>'
+ *     'basePath' => '/2010-04-01/Accounts/<sid>'
  * )
  *
  * There is also an option for ext which can be json or blank for twilio. If datatype
@@ -65,28 +65,28 @@ class RestSource extends DataSource {
 		$this->_httpSocket = new HttpSocket();
 		parent::__construct($config);
 	}
-
-	public function read(&$model, $queryData = array()) {
-		if (!property_exists($model, 'crud')) {
-			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+	
+	public function create(&$model, $fields = array(), $values()) {
+		if (!$this->_checkCrud($model, 'create')) {
+			return false;
 		}
 	}
 	
-	public function create(&$model, $fields = array(), $values()) {
-		if (!property_exists($model, 'crud')) {
-			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+	public function read(&$model, $queryData = array()) {
+		if (!$this->_checkCrud($model, 'read')) {
+			return false;
 		}
 	}
 	
 	public function update(&$model, $fields = array(), $value()) {
-		if (!property_exists($model, 'crud')) {
-			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+		if (!$this->_checkCrud($model, 'update')) {
+			return false;
 		}
 	}
 	
 	public function delete(&$model,  $id = null) {
-		if (!property_exists($model, 'crud')) {
-			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+		if (!$this->_checkCrud($model, 'delete')) {
+			return false;
 		}
 	}
 	
@@ -145,6 +145,27 @@ class RestSource extends DataSource {
 	 */
 	protected function _parseXml($response = null) {
 		
+	}
+	
+	/**
+	 * Checks that the model has a property called crud and that the method being accessed
+	 * is allowed. Returns false if crud doesn't exist or the method is not allowed. Returns
+	 * true if method is allowed.
+	 *
+	 * @param object $model
+	 * @param string $type
+	 * @access protected
+	 * @return boolean
+	 */
+	protected function _checkCrud(&$model, $type = 'read') {
+		if (!property_exists($model, 'crud')) {
+			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+			return false;
+		}
+		if (!$model->crud[$type]['allowed']) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
