@@ -12,9 +12,9 @@
  **/
 class ConferenceParticipants extends TwilioAppModel {
 	public $name = 'ConferenceParticipants';
-	public $twilioSchema = array(
+	public $schema = array(
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true,
 			'path' => '/Conferences/%s/Participants/%s',

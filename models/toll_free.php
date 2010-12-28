@@ -12,9 +12,9 @@
  **/
 class TollFree extends TwilioAppModel {
 	public $name = 'TollFree';
-	public $twilioSchema = array(	
+	public $schema = array(	
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true,
 			'path' => '/AvailablePhoneNumbers/US/TollFree',

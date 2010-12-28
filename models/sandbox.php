@@ -12,10 +12,10 @@
  **/
 class Sandbox extends TwilioAppModel {
 	public $name = 'Sandbox';
-	public $twilioSchema = array(
+	public $schema = array(
 	
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true
 		),

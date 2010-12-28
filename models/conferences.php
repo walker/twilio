@@ -12,9 +12,9 @@
  **/
 class Conferences extends TwilioAppModel {
 	public $name = 'Conferences';
-	public $twilioSchema = array(	
+	public $schema = array(	
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true,
 			'path' => '/Conferences/%s',

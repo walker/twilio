@@ -12,10 +12,10 @@
  **/
 class Notifications extends TwilioAppModel {
 	public $name = 'Notifications';
-	public $twilioSchema = array(
+	public $schema = array(
 	
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true
 		),

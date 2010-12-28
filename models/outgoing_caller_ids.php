@@ -12,10 +12,10 @@
  **/
 class OutgoingCallerIds extends TwilioAppModel {
 	public $name = 'OutgoingCallerIds';
-	public $twilioSchema = array(
+	public $schema = array(
 	
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true,
 			'path' => '/OutgoingCallerIds',

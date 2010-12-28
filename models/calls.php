@@ -12,10 +12,10 @@
  **/
 class Calls extends TwilioAppModel {
 	public $name = 'Calls';
-	public $twilioSchema = array(
+	public $schema = array(
 	
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true,
 			'path' => '/Calls/%s',

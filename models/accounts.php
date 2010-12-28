@@ -12,9 +12,9 @@
  **/
 class Accounts extends TwilioAppModel {
 	public $name = 'Accounts';
-	public $twilioSchema = array(
+	public $schema = array(
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true
 			'path' => '/Accounts/%s'

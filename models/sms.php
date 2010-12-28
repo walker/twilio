@@ -12,10 +12,10 @@
  **/
 class Sms extends TwilioAppModel {
 	public $name = 'Sms';
-	public $twilioSchema = array(
+	public $schema = array(
 	
 	);
-	public $twilioSettins = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true,
 			'path' => '/SMS/Messages/%s',

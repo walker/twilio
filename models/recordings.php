@@ -12,10 +12,10 @@
  **/
 class Recordings extends TwilioAppModel {
 	public $name = 'Recordings';
-	public $twilioSchema = array(
+	public $schema = array(
 	
 	);
-	public $twilioSettings = array(
+	public $crud = array(
 		'read' => array(
 			'allowed' => true
 		),
