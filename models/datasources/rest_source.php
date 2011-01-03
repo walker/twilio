@@ -57,12 +57,13 @@ class RestSource extends DataSource {
 	protected $_baseConfig = array(
 		'domain' => '',
 		'basePath' => '',
-		'type' => 'http',
+		'scheme' => 'http',
+		'port' => 80,
 		'auth' => 'basic',
 		'username' => '',
 		'password' => '',
 		'ext' => '',
-		'dataType' => 'json'
+		'type' => 'json'
 	);
 
 	/**
@@ -93,8 +94,9 @@ class RestSource extends DataSource {
 	 * @access public
 	 * @return mixed array or false
 	 */
-	public function create(&$model, $fields = array(), $values()) {
-		if (!$this->_checkCrud($model, 'create')) {
+	public function create(&$model, $fields = array(), $values = array()) {
+		$options = $this->_checkCrud($model, 'create');
+		if (!$options) {
 			return false;
 		}
 	}
@@ -108,9 +110,16 @@ class RestSource extends DataSource {
 	 * @return mixed array or false
 	 */
 	public function read(&$model, $queryData = array()) {
-		if (!$this->_checkCrud($model, 'read')) {
+		$options = $this->_checkCrud($model, 'read')
+		if (!$options) {
 			return false;
 		}
+		$query = false;
+		$data = false;
+		if (!empty($options['query']) && !empty($queryData['conditions'])) {
+			$query = $this->_parseQuery($model, $queryData['conditions'], $options['query']);
+		}
+		return $this->_request($model, $options['path'], $query, $data, 'GET');
 	}
 
 	/**
@@ -121,8 +130,9 @@ class RestSource extends DataSource {
 	 * @access public
 	 * @return mixed array or false
 	 */
-	public function update(&$model, $fields = array(), $value()) {
-		if (!$this->_checkCrud($model, 'update')) {
+	public function update(&$model, $fields = array(), $values = array()) {
+		$options = $this->_checkCrud($model, 'update');
+		if (!$options) {
 			return false;
 		}
 	}
@@ -136,7 +146,8 @@ class RestSource extends DataSource {
 	 * @return mixed array or false
 	 */
 	public function delete(&$model,  $id = null) {
-		if (!$this->_checkCrud($model, 'delete')) {
+		$options = $this->_checkCrud($model, 'delete');
+		if (!$options) {
 			return false;
 		}
 	}
@@ -173,27 +184,68 @@ class RestSource extends DataSource {
 	 * response or boolean false if the request fails.
 	 *
 	 * @param object $model
+	 * @param string $path
+	 * @param array $query
+	 * @param array $data
+	 * @param string $method
 	 * @access protected
 	 * @return mixed
 	 */
-	protected function _request(&$model) {
-		
+	protected function _request(&$model, $path = '', $query = array(), $data = array(), $method = 'GET') {
+		$request = array(
+			'method' => $method,
+			'uri' => array(
+				'scheme' => $this->config['scheme'],
+				'host' => $this->config['domain'],
+				'port' => $this->config['port'],
+				'path' => $path,
+				'query' => $query
+			)
+		);
+		if (strtoupper($method) === 'POST' && !empty($data)) {
+			$request['body'] = $data
+		}
+		if (!empty($this->config['basePath'])) {
+			$_path = $this->config['basePath'].$path;
+			$request['uri']['path'] = str_replace('//', '/', $_path);
+		}
+		if (!empty($this->config['ext'])) {
+			$request['url']['path'] .= '.'.str_replace('.', '', $this->config['ext']);
+		}
+		if (!empty($this->config['auth'])) {
+			$request['auth'] = array(
+				'method' => $this->config['auth'],
+				'user' => $this->config['username'],
+				'password' => $this->config['password']
+			);
+		}
+		$response = $this->_httpSocket->request($request);
+		switch ($this->config['type']) {
+			case 'json':
+				return $this->_parseJson($response);
+			break;
+			case 'xml':
+				return $this->_parseXml($response);
+			break;
+			default:
+				return $response;
+		}
 	}
 	
 	/**
-	 * If config['datatype'] is json then this method will parse the response
+	 * If config['type'] is json then this method will parse the response
 	 * and return the json parsed object as an associative array by default.
 	 *
 	 * @param string $response
 	 * @access protected
 	 * @return array
 	 */
-	protected function _parseJson($resonse = null) {
-	
+	protected function _parseJson($response = null) {
+		return $response;
 	}
 	
 	/**
-	 * If config['datatype'] is xml then this method will parse the response
+	 * If config['type'] is xml then this method will parse the response
 	 * and return the xml parsed object as an associative array by default.
 	 *
 	 * @param string $response
@@ -201,18 +253,52 @@ class RestSource extends DataSource {
 	 * @return array
 	 */
 	protected function _parseXml($response = null) {
-		
+		return $response;
+	}
+	
+	/**
+	 * Takes the conditions given to Model::find and the valid query string options
+	 * defined in the rest model crud property and returns an array for the HttpSocket::request
+	 * query option.
+	 *
+	 * @param object $model
+	 * @param array $conditions
+	 * @param array $valid
+	 * @access protected
+	 * @return mixed array or false
+	 */
+	protected function _parseQuery(&$model, $conditions = array(), $valid = array()) {
+		if (empty($conditions) || empty($valid)) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Takes the conditions given to Model::save and the valid post data options
+	 * defined in the rest model crud property and returns an array for the HttpSocket::request
+	 * data option.
+	 *
+	 * @param object $model
+	 * @param array $data
+	 * @param array $valid
+	 * @access protected
+	 * @return mixed array or false
+	 */
+	protected function _parseData(&$model, $data = array(), $valid = array()) {
+		if (empty($data) || empty($valid)) {
+			return false;
+		}
 	}
 	
 	/**
 	 * Checks that the model has a property called crud and that the method being accessed
 	 * is allowed. Returns false if crud doesn't exist or the method is not allowed. Returns
-	 * true if method is allowed.
+	 * the value stored in $model->crud[$type] if it exists
 	 *
 	 * @param object $model
 	 * @param string $type
 	 * @access protected
-	 * @return boolean
+	 * @return mixed false or array
 	 */
 	protected function _checkCrud(&$model, $type = 'read') {
 		if (!property_exists($model, 'crud')) {
@@ -220,9 +306,10 @@ class RestSource extends DataSource {
 			return false;
 		}
 		if (!$model->crud[$type]['allowed']) {
+			trigger_error($model->name." does not allow ".$type." requests", E_USER_WARNING);
 			return false;
 		}
-		return true;
+		return $model->crud[$type];
 	}
 	
 	/**
