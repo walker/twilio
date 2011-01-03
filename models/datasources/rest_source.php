@@ -52,14 +52,14 @@ class RestSource extends DataSource {
 	 * Default options for datasource
 	 *
 	 * @var array
-	 * @access protected
+	 * @access public
 	 */
-	protected $_baseConfig = array(
+	public $_baseConfig = array(
 		'domain' => '',
 		'basePath' => '',
 		'scheme' => 'http',
 		'port' => 80,
-		'auth' => 'basic',
+		'auth' => 'Basic',
 		'username' => '',
 		'password' => '',
 		'ext' => '',
@@ -99,6 +99,17 @@ class RestSource extends DataSource {
 		if (!$options) {
 			return false;
 		}
+		foreach ($fields as &$field) {
+			$field = Inflector::classify($field);
+		}
+		$query = false;
+		$data = $this->_parseData(array_combine($fields, $values), $options['data']);
+		$response = $this->_request($model, $options['path'], $query, $data, 'POST');
+		if (is_array($response) && !empty($response)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -110,7 +121,7 @@ class RestSource extends DataSource {
 	 * @return mixed array or false
 	 */
 	public function read(&$model, $queryData = array()) {
-		$options = $this->_checkCrud($model, 'read')
+		$options = $this->_checkCrud($model, 'read');
 		if (!$options) {
 			return false;
 		}
@@ -119,7 +130,7 @@ class RestSource extends DataSource {
 		if (!empty($options['query']) && !empty($queryData['conditions'])) {
 			$query = $this->_parseQuery($model, $queryData['conditions'], $options['query']);
 		}
-		return $this->_request($model, $options['path'], $query, $data, 'GET');
+		return array($model->alias => $this->_request($model, $options['path'], $query, $data, 'GET'));
 	}
 
 	/**
@@ -133,6 +144,18 @@ class RestSource extends DataSource {
 	public function update(&$model, $fields = array(), $values = array()) {
 		$options = $this->_checkCrud($model, 'update');
 		if (!$options) {
+			return false;
+		}
+		foreach ($fields as &$field) {
+			$field = Inflector::classify($field);
+		}
+		$query = false;
+		$data = array_combine($fields, $values);
+		$data = $this->_parseData($model, $data, $options['data']);
+		$response = $this->_request($model, $options['path'], $query, $data, 'POST');
+		if (is_array($response) && !empty($response)) {
+			return true;
+		} else {
 			return false;
 		}
 	}
@@ -171,8 +194,8 @@ class RestSource extends DataSource {
 	 * @return array
 	 */
 	public function describe(&$model) {
-		if (property_exists($model, 'schema')) {
-			return $model->schema;
+		if (property_exists($model, '_schema')) {
+			return $model->_schema;
 		} else {
 			return array();
 		}
@@ -203,21 +226,23 @@ class RestSource extends DataSource {
 			)
 		);
 		if (strtoupper($method) === 'POST' && !empty($data)) {
-			$request['body'] = $data
+			$request['body'] = $data;
 		}
 		if (!empty($this->config['basePath'])) {
 			$_path = $this->config['basePath'].$path;
 			$request['uri']['path'] = str_replace('//', '/', $_path);
 		}
 		if (!empty($this->config['ext'])) {
-			$request['url']['path'] .= '.'.str_replace('.', '', $this->config['ext']);
+			$request['uri']['path'] .= '.'.str_replace('.', '', $this->config['ext']);
 		}
 		if (!empty($this->config['auth'])) {
 			$request['auth'] = array(
 				'method' => $this->config['auth'],
 				'user' => $this->config['username'],
-				'password' => $this->config['password']
+				'pass' => $this->config['password']
 			);
+			$request['uri']['user'] = $this->config['username'];
+			$request['uri']['pass'] = $this->config['password'];
 		}
 		$response = $this->_httpSocket->request($request);
 		switch ($this->config['type']) {
@@ -241,7 +266,7 @@ class RestSource extends DataSource {
 	 * @return array
 	 */
 	protected function _parseJson($response = null) {
-		return $response;
+		return json_decode($response, true);
 	}
 	
 	/**
@@ -271,6 +296,13 @@ class RestSource extends DataSource {
 		if (empty($conditions) || empty($valid)) {
 			return false;
 		}
+		$ret = array();
+		foreach ($conditions as $key => $value) {
+			if (in_array($key, $valid)) {
+				$ret[$key] = $value;
+			}
+		}
+		return $ret;
 	}
 	
 	/**
@@ -288,6 +320,13 @@ class RestSource extends DataSource {
 		if (empty($data) || empty($valid)) {
 			return false;
 		}
+		$ret = array();
+		foreach ($data as $key => $value) {
+			if (in_array($key, $valid)) {
+				$ret[$key] = $value;
+			}
+		}
+		return $ret;
 	}
 	
 	/**

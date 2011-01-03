@@ -12,22 +12,54 @@
  **/
 class Sandbox extends TwilioAppModel {
 	public $name = 'Sandbox';
-	public $schema = array(
-	
+	public $useTable = false;
+	public $_schema = array(
+		'voice_url' => array(
+			'type' => 'string',
+			'null' => false
+		),
+		'voice_method' => array(
+			'type' => 'string'
+		),
+		'sms_url' => array(
+			'type' => 'string'
+		),
+		'sms_method' => array(
+			'type' => 'string'
+		)
 	);
 	public $crud = array(
 		'read' => array(
-			'allowed' => true
+			'allowed' => true,
+			'path' => '/Sandbox',
+			'query' => false,
+			'data' => false
 		),
 		'create' => array(
 			'allowed' => false
 		),
 		'update' => array(
-			'allowed' => true
+			'allowed' => true,
+			'path' => '/Sandbox',
+			'query' => false,
+			'data' => array('VoiceUrl', 'VoiceMethod', 'SmsUrl', 'SmsMethod')
 		),
 		'delete' => array(
 			'allowed' => false
 		)
 	);
+	
+	/**
+	 * Set the model->id to a dummy value to trick the Model into calling update
+	 * rather than create. The Sandbox resource has no id and there is only one
+	 * resource for an account, so all saves should be updates and never creates.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function beforeSave() {
+		$this->id = 1234;
+		return true;
+	}
 }
 ?>
