@@ -48,6 +48,12 @@ App::import('Core', 'HttpSocket');
 
 class RestSource extends DataSource {
 
+	/**
+	 * Default options for datasource
+	 *
+	 * @var array
+	 * @access protected
+	 */
 	protected $_baseConfig = array(
 		'domain' => '',
 		'basePath' => '',
@@ -59,37 +65,92 @@ class RestSource extends DataSource {
 		'dataType' => 'json'
 	);
 
+	/**
+	 * Member property that is an object of HttpSocket. Set in __construct
+	 *
+	 * @var object
+	 * @access protected
+	 */
 	protected $_httpSocket;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param array $config
+	 * @access public
+	 * @return void
+	 */
 	public function __construct($config = array()) {
 		$this->_httpSocket = new HttpSocket();
 		parent::__construct($config);
 	}
 
+	/**
+	 * Read method used for model find queries
+	 *
+	 * @param object $model
+	 * @param array $queryData
+	 * @access public
+	 * @return mixed array or false
+	 */
 	public function read(&$model, $queryData = array()) {
 		if (!property_exists($model, 'crud')) {
 			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+			return false;
 		}
 	}
 	
+	/**
+	 * Read method used for model find queries
+	 *
+	 * @param object $model
+	 * @param array $queryData
+	 * @access public
+	 * @return mixed array or false
+	 */
 	public function create(&$model, $fields = array(), $values()) {
 		if (!property_exists($model, 'crud')) {
 			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+			return false;
 		}
 	}
 	
+	/**
+	 * Read method used for model find queries
+	 *
+	 * @param object $model
+	 * @param array $queryData
+	 * @access public
+	 * @return mixed array or false
+	 */
 	public function update(&$model, $fields = array(), $value()) {
 		if (!property_exists($model, 'crud')) {
 			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+			return false;
 		}
 	}
 	
+	/**
+	 * Read method used for model find queries
+	 *
+	 * @param object $model
+	 * @param array $queryData
+	 * @access public
+	 * @return mixed array or false
+	 */
 	public function delete(&$model,  $id = null) {
 		if (!property_exists($model, 'crud')) {
 			trigger_error($model->name." does not contain a the property crud", E_USER_WARNING);
+			return false;
 		}
 	}
 	
+	/**
+	 * Lists the resources available
+	 *
+	 * @access public
+	 * @return array
+	 */
 	public function listSources() {
 	
 	}
