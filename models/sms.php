@@ -13,7 +13,15 @@
 class Sms extends TwilioAppModel {
 	public $name = 'Sms';
 	public $schema = array(
-	
+		'to' => array(
+			'type' => 'string'
+		),
+		'from' => array(
+			'type' => 'string'
+		),
+		'body' => array(
+			'type' => 'text'
+		)
 	);
 	public $crud = array(
 		'read' => array(
