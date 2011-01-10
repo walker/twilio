@@ -103,7 +103,7 @@ class RestSource extends DataSource {
 			$field = Inflector::classify($field);
 		}
 		$query = false;
-		$data = $this->_parseData(array_combine($fields, $values), $options['data']);
+		$data = $this->_parseData($model, array_combine($fields, $values), $options['data']);
 		$response = $this->_request($model, $options['path'], $query, $data, 'POST');
 		if (is_array($response) && !empty($response)) {
 			return true;
@@ -122,6 +122,9 @@ class RestSource extends DataSource {
 	 */
 	public function read(&$model, $queryData = array()) {
 		$options = $this->_checkCrud($model, 'read');
+		if (!isset($queryData['conditions']['sid']) || empty($queryData['conditions']['sid'])) {
+			$options['path'] = str_replace('/%s', '', $options['path']);
+		}
 		if (!$options) {
 			return false;
 		}
