@@ -12,7 +12,6 @@
  **/
 class Sandbox extends TwilioAppModel {
 	public $name = 'Sandbox';
-	public $useTable = false;
 	public $_schema = array(
 		'voice_url' => array(
 			'type' => 'string',

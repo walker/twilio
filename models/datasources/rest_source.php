@@ -122,6 +122,9 @@ class RestSource extends DataSource {
 	 */
 	public function read(&$model, $queryData = array()) {
 		$options = $this->_checkCrud($model, 'read');
+		if (!isset($queryData['conditions']['sid']) || empty($queryData['conditions']['sid'])) {
+			$options['path'] = str_replace('/%s', '', $options['path']);
+		}
 		if (!$options) {
 			return false;
 		}

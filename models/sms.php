@@ -12,8 +12,20 @@
  **/
 class Sms extends TwilioAppModel {
 	public $name = 'Sms';
-	public $schema = array(
-	
+	public $_schema = array(
+		'sid' => array(
+			'type' => 'string',
+			'length' => '40'
+		),
+		'to' => array(
+			'type' => 'string'
+		),
+		'from' => array(
+			'type' => 'string'
+		),
+		'body' => array(
+			'type' => 'text'
+		)
 	);
 	public $crud = array(
 		'read' => array(
