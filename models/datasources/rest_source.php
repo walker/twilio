@@ -103,10 +103,10 @@ class RestSource extends DataSource {
 			$field = Inflector::classify($field);
 		}
 		$query = false;
-		$data = $this->_parseData(array_combine($fields, $values), $options['data']);
+		$data = $this->_parseData($model, array_combine($fields, $values), $options['data']);
 		$response = $this->_request($model, $options['path'], $query, $data, 'POST');
 		if (is_array($response) && !empty($response)) {
-			return true;
+			return array($model->alias => $response);
 		} else {
 			return false;
 		}
@@ -150,11 +150,10 @@ class RestSource extends DataSource {
 			$field = Inflector::classify($field);
 		}
 		$query = false;
-		$data = array_combine($fields, $values);
-		$data = $this->_parseData($model, $data, $options['data']);
+		$data = $this->_parseData($model, array_combine($fields, $values), $options['data']);
 		$response = $this->_request($model, $options['path'], $query, $data, 'POST');
 		if (is_array($response) && !empty($response)) {
-			return true;
+			return array($model->alias => $response);
 		} else {
 			return false;
 		}
