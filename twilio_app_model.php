@@ -142,7 +142,7 @@ class TwilioAppModel extends AppModel {
 			if (!empty($this->id)) {
 				$success = (bool)$db->update($this, $fields, $values);
 			} else {
-				$fInfo = $this->_schema[$this->primaryKey];
+				/*$fInfo = $this->_schema[$this->primaryKey];
 				$isUUID = ($fInfo['length'] == 36 &&
 					($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
 				);
@@ -153,7 +153,7 @@ class TwilioAppModel extends AppModel {
 					} else {
 						list($fields[], $values[]) = array($this->primaryKey, String::uuid());
 					}
-				}
+				}*/
 
 				if (!$db->create($this, $fields, $values)) {
 					$success = $created = false;

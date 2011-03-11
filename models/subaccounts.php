@@ -17,19 +17,19 @@ class Subaccounts extends TwilioAppModel {
 	public $crud = array(
 		'read' => array(
 			'allowed' => true,
-			'path' => '/Accounts/%s'
+			'path' => '/Accounts/%s',
 			'data' => false,
 			'query' => false
 		),
 		'create' => array(
 			'allowed' => true,
-			'path' => '/Accounts',
+			'path' => '/2010-04-01/Accounts',
 			'data' => array('FriendlyName'),
 			'query' => false
 		),
 		'update' => array(
 			'allowed' => true,
-			'path' => '/Accounts/%s'
+			'path' => '/Accounts/%s',
 			'data' => array('FriendlyName'),
 			'query' => false
 		),

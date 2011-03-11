@@ -106,7 +106,8 @@ class RestSource extends DataSource {
 		$data = $this->_parseData($model, array_combine($fields, $values), $options['data']);
 		$response = $this->_request($model, $options['path'], $query, $data, 'POST');
 		if (is_array($response) && !empty($response)) {
-			return array($model->alias => $response);
+			$model->data = array($model->alias => $response);
+			return true;
 		} else {
 			return false;
 		}
@@ -231,7 +232,11 @@ class RestSource extends DataSource {
 			$request['body'] = $data;
 		}
 		if (!empty($this->config['basePath'])) {
-			$_path = $this->config['basePath'].$path;
+			if (strstr($this->config['basePath'], $path)) {
+				$_path = $path;
+			} else {
+				$_path = $this->config['basePath'].$path;
+			}
 			$request['uri']['path'] = str_replace('//', '/', $_path);
 		}
 		if (!empty($this->config['ext'])) {
