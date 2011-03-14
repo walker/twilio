@@ -34,5 +34,10 @@ class Accounts extends TwilioAppModel {
 			'allowed' => false
 		)
 	);
+	public $pathOptions = array(
+		'base' => false,
+		'user' => true,
+		'version' => true
+	);
 }
 ?>

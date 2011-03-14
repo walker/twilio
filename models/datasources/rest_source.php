@@ -45,6 +45,7 @@
  */
  
 App::import('Core', 'HttpSocket');
+App::import('Core', 'Xml');
 
 class RestSource extends DataSource {
 
@@ -123,7 +124,9 @@ class RestSource extends DataSource {
 	 */
 	public function read(&$model, $queryData = array()) {
 		$options = $this->_checkCrud($model, 'read');
-		if (!isset($queryData['conditions']['sid']) || empty($queryData['conditions']['sid'])) {
+		if (isset($queryData['conditions']['sid']) && empty($queryData['conditions']['sid'])) {
+			$options['path'] = sprintf($options['path'], $queryData['conditions']['sid']);
+		} else {
 			$options['path'] = str_replace('/%s', '', $options['path']);
 		}
 		if (!$options) {
@@ -231,17 +234,7 @@ class RestSource extends DataSource {
 		if (strtoupper($method) === 'POST' && !empty($data)) {
 			$request['body'] = $data;
 		}
-		if (!empty($this->config['basePath'])) {
-			if (strstr($this->config['basePath'], $path)) {
-				$_path = $path;
-			} else {
-				$_path = $this->config['basePath'].$path;
-			}
-			$request['uri']['path'] = str_replace('//', '/', $_path);
-		}
-		if (!empty($this->config['ext'])) {
-			$request['uri']['path'] .= '.'.str_replace('.', '', $this->config['ext']);
-		}
+		$request['uri']['path'] = $this->_buildPath($model, $path);	
 		if (!empty($this->config['auth'])) {
 			$request['auth'] = array(
 				'method' => $this->config['auth'],
@@ -265,6 +258,40 @@ class RestSource extends DataSource {
 	}
 	
 	/**
+	 * Method that takes the model and desired path that was sent into _request
+	 * and returns the correct path to the twilio resource based on the settings
+	 * in model->pathOptions
+	 *
+	 * @param object $model
+	 * @param string $path
+	 * @access protected
+	 * @return string
+	 */
+	protected function _buildPath(&$model, $path) {
+		$options = array();
+		if (property_exists($model, 'pathOptions')) {
+			$options = $model->pathOptions;
+		}
+		if (empty($options)) {
+			$_path = '/'.$this->config['version'].'/Accounts/'.$this->config['username'].'/'.$path;
+		} else {
+			if ($options['user'] && $options['user'] && !$options['base']) {
+				if (strstr($path, '%s')) {
+					$_path = '/'.$this->config['version'].'/'.sprintf($path, $this->config['username']);
+				} else {
+					$_path = '/'.$this->config['version'].'/'.$path;
+				}
+			} else {
+				$_path = '/'.$this->config['version'].'/'.$this->config['base'].'/'.$this->config['username'].'/'.$path;
+			}
+		}
+		if (!empty($this->config['ext'])) {
+			$_path .= '.'.str_replace('.', '', $this->config['ext']);
+		}
+		return str_replace('//', '/', $_path);
+	}
+	
+	/**
 	 * If config['type'] is json then this method will parse the response
 	 * and return the json parsed object as an associative array by default.
 	 *
@@ -285,7 +312,8 @@ class RestSource extends DataSource {
 	 * @return array
 	 */
 	protected function _parseXml($response = null) {
-		return $response;
+		$xml = new Xml($response);
+		return $xml->toArray();
 	}
 	
 	/**

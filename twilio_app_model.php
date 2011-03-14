@@ -5,6 +5,13 @@ class TwilioAppModel extends AppModel {
 	public $useDbConfig = 'twilio';
 	public $useTable = false;
 	public $primaryKey = 'sid';
+	public $crud = array();
+	public $_schema = array();
+	public $pathOptions = array(
+		'version' => true,
+		'base' => true,
+		'user' => true
+	);
 	
 /**
  * Copied straight out of CakePHP core for save testing

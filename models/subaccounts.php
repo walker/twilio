@@ -17,25 +17,30 @@ class Subaccounts extends TwilioAppModel {
 	public $crud = array(
 		'read' => array(
 			'allowed' => true,
-			'path' => '/Accounts/%s',
+			'path' => '/Accounts',
 			'data' => false,
 			'query' => false
 		),
 		'create' => array(
 			'allowed' => true,
-			'path' => '/2010-04-01/Accounts',
+			'path' => '/Accounts',
 			'data' => array('FriendlyName'),
 			'query' => false
 		),
 		'update' => array(
 			'allowed' => true,
 			'path' => '/Accounts/%s',
-			'data' => array('FriendlyName'),
+			'data' => array('FriendlyName', 'Status'),
 			'query' => false
 		),
 		'delete' => array(
 			'allowed' => false
 		)
+	);
+	public $pathOptions = array(
+		'base' => false,
+		'user' => true,
+		'version' => true
 	);
 }
 ?>
