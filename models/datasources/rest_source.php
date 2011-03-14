@@ -57,12 +57,12 @@ class RestSource extends DataSource {
 	 */
 	public $_baseConfig = array(
 		'domain' => '',
-		'basePath' => '',
 		'scheme' => 'http',
 		'port' => 80,
 		'auth' => 'Basic',
 		'username' => '',
 		'password' => '',
+		'version' => '',
 		'ext' => '',
 		'type' => 'json'
 	);
