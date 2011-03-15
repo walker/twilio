@@ -277,12 +277,20 @@ class RestSource extends DataSource {
 		} else {
 			if ($options['user'] && $options['user'] && !$options['base']) {
 				if (strstr($path, '%s')) {
-					$_path = '/'.$this->config['version'].'/'.sprintf($path, $this->config['username']);
+					if (isset($model->id) && !empty($model->id)) {
+						$_path = '/'.$this->config['version'].'/'.sprintf($path, $model->id);
+					} else {
+						$_path = '/'.$this->config['version'].'/'.sprintf($path, $this->config['username']);
+					}
 				} else {
 					$_path = '/'.$this->config['version'].'/'.$path;
 				}
 			} else {
-				$_path = '/'.$this->config['version'].'/'.$this->config['base'].'/'.$this->config['username'].'/'.$path;
+				if (strstr($path, '%s')) {
+					$_path = '/'.$this->config['version'].'/'.$this->config['base'].'/'.$this->config['username'].'/'.sprintf($path, $model->id);
+				} else {
+					$_path = '/'.$this->config['version'].'/'.$this->config['base'].'/'.$this->config['username'].'/'.$path;
+				}
 			}
 		}
 		if (!empty($this->config['ext'])) {
@@ -356,6 +364,9 @@ class RestSource extends DataSource {
 			return false;
 		}
 		$ret = array();
+		if (isset($data[$model->alias])) {
+			$data = $data[$model->alias];
+		}
 		foreach ($data as $key => $value) {
 			if (in_array($key, $valid)) {
 				$ret[$key] = $value;
