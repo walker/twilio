@@ -58,13 +58,14 @@ class RestSource extends DataSource {
 	public $_baseConfig = array(
 		'domain' => '',
 		'scheme' => 'http',
-		'port' => 80,
+		'port' => '', // 80,
 		'auth' => 'Basic',
 		'username' => '',
 		'password' => '',
 		'version' => '',
-		'ext' => '',
-		'type' => 'json'
+		'ext' => 'json',
+		'type' => 'json',
+		'base' => 'Accounts'
 	);
 
 	/**
@@ -228,12 +229,16 @@ class RestSource extends DataSource {
 				'host' => $this->config['domain'],
 				'port' => $this->config['port'],
 				'path' => $path,
-				'query' => $query
+				'ext' => $this->config['ext']
 			)
 		);
 		if (strtoupper($method) === 'POST' && !empty($data)) {
 			$request['body'] = $data;
 		}
+		if (strtoupper($method) === 'GET' && !empty($data)) {
+			$request['uri']['query'] = $query;
+		}
+			
 		$request['uri']['path'] = $this->_buildPath($model, $path);	
 		if (!empty($this->config['auth'])) {
 			$request['auth'] = array(
@@ -241,10 +246,12 @@ class RestSource extends DataSource {
 				'user' => $this->config['username'],
 				'pass' => $this->config['password']
 			);
-			$request['uri']['user'] = $this->config['username'];
-			$request['uri']['pass'] = $this->config['password'];
+			// $request['uri']['user'] = $this->config['username'];
+			// $request['uri']['pass'] = $this->config['password'];
 		}
+		
 		$response = $this->_httpSocket->request($request);
+		
 		switch ($this->config['type']) {
 			case 'json':
 				return $this->_parseJson($response);
