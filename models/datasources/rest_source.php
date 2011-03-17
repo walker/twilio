@@ -56,13 +56,13 @@ class RestSource extends DataSource {
 	 * @access public
 	 */
 	public $_baseConfig = array(
-		'domain' => '',
+		'domain' => 'api.twilio.com',
 		'scheme' => 'http',
 		'port' => '', // 80,
 		'auth' => 'Basic',
 		'username' => '',
 		'password' => '',
-		'version' => '',
+		'version' => '2010-04-01',
 		'ext' => 'json',
 		'type' => 'json',
 		'base' => 'Accounts'
