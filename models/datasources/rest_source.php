@@ -248,7 +248,6 @@ class RestSource extends DataSource {
 			$request['uri']['user'] = $this->config['username'];
 			$request['uri']['pass'] = $this->config['password'];
 		}
-		$this->log($request);
 		$response = $this->_httpSocket->request($request);
 		switch ($this->config['type']) {
 			case 'json':
@@ -373,7 +372,6 @@ class RestSource extends DataSource {
 		if (isset($data[$model->alias])) {
 			$data = $data[$model->alias];
 		}
-		$this->log($data);
 		foreach ($data as $key => $value) {
 			$valid[] = 'RunAsAccount';
 			$valid[] = 'RunAsAccountToken';
@@ -381,7 +379,6 @@ class RestSource extends DataSource {
 				$ret[$key] = $value;
 			}
 		}
-		$this->log($ret);
 		return $ret;
 	}
 	
