@@ -58,14 +58,12 @@ class RestSource extends DataSource {
 	public $_baseConfig = array(
 		'domain' => 'api.twilio.com',
 		'scheme' => 'http',
-		'port' => '', // 80,
 		'auth' => 'Basic',
 		'username' => '',
 		'password' => '',
-		'version' => '2010-04-01',
-		'ext' => 'json',
-		'type' => 'json',
-		'base' => 'Accounts'
+		'version' => '',
+		'ext' => '',
+		'type' => 'json'
 	);
 
 	/**
@@ -222,23 +220,24 @@ class RestSource extends DataSource {
 	 * @return mixed
 	 */
 	protected function _request(&$model, $path = '', $query = array(), $data = array(), $method = 'GET') {
+		if(isset($data['RunAsAccount']) && isset($data['RunAsAccountToken'])) {
+			$this->config['username'] = $data['RunAsAccount'];
+			$this->config['password'] = $data['RunAsAccountToken'];
+			unset($data['RunAsAccount']);
+			unset($data['RunAsAccountToken']);
+		}
 		$request = array(
 			'method' => $method,
 			'uri' => array(
 				'scheme' => $this->config['scheme'],
 				'host' => $this->config['domain'],
-				'port' => $this->config['port'],
 				'path' => $path,
-				'ext' => $this->config['ext']
+				'query' => $query
 			)
 		);
 		if (strtoupper($method) === 'POST' && !empty($data)) {
 			$request['body'] = $data;
 		}
-		if (strtoupper($method) === 'GET' && !empty($data)) {
-			$request['uri']['query'] = $query;
-		}
-			
 		$request['uri']['path'] = $this->_buildPath($model, $path);	
 		if (!empty($this->config['auth'])) {
 			$request['auth'] = array(
@@ -246,12 +245,11 @@ class RestSource extends DataSource {
 				'user' => $this->config['username'],
 				'pass' => $this->config['password']
 			);
-			// $request['uri']['user'] = $this->config['username'];
-			// $request['uri']['pass'] = $this->config['password'];
+			$request['uri']['user'] = $this->config['username'];
+			$request['uri']['pass'] = $this->config['password'];
 		}
-		
+		$this->log($request);
 		$response = $this->_httpSocket->request($request);
-		
 		switch ($this->config['type']) {
 			case 'json':
 				return $this->_parseJson($response);
@@ -294,16 +292,17 @@ class RestSource extends DataSource {
 				}
 			} else {
 				if (strstr($path, '%s')) {
-					$_path = '/'.$this->config['version'].'/'.$this->config['base'].'/'.$this->config['username'].'/'.sprintf($path, $model->id);
+					$_path = '/'.$this->config['version'].'/Accounts/'.$this->config['username'].'/'.sprintf($path, $model->id);
 				} else {
-					$_path = '/'.$this->config['version'].'/'.$this->config['base'].'/'.$this->config['username'].'/'.$path;
+					$_path = '/'.$this->config['version'].'/Accounts/'.$this->config['username'].'/'.$path;
 				}
 			}
 		}
 		if (!empty($this->config['ext'])) {
 			$_path .= '.'.str_replace('.', '', $this->config['ext']);
 		}
-		return str_replace('//', '/', $_path);
+		$_path = str_replace('//', '/', $_path);
+		return $_path;
 	}
 	
 	/**
@@ -374,11 +373,15 @@ class RestSource extends DataSource {
 		if (isset($data[$model->alias])) {
 			$data = $data[$model->alias];
 		}
+		$this->log($data);
 		foreach ($data as $key => $value) {
+			$valid[] = 'RunAsAccount';
+			$valid[] = 'RunAsAccountToken';
 			if (in_array($key, $valid)) {
 				$ret[$key] = $value;
 			}
 		}
+		$this->log($ret);
 		return $ret;
 	}
 	

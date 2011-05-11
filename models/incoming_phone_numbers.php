@@ -31,7 +31,7 @@ class IncomingPhoneNumbers extends TwilioAppModel {
 		'update' => array(
 			'allowed' => true,
 			'path' => '/IncomingPhoneNumbers/%s',
-			'data' => array('PhoneNumber', 'ApiVersion', 'AreaCode', 'FriendlyName', 'VoiceUrl', 'VoiceMethod', 'VoiceFallbackUrl', 'VoiceFallbackMethod', 'StatusCallback', 'StatusCallbackMethod', 'SmsUrl', 'SmsFallbackMethod', 'VoiceCallerIdLookup'),
+			'data' => array('AccountSid', 'PhoneNumber', 'ApiVersion', 'AreaCode', 'FriendlyName', 'VoiceUrl', 'VoiceMethod', 'VoiceFallbackUrl', 'VoiceFallbackMethod', 'StatusCallback', 'StatusCallbackMethod', 'SmsUrl', 'SmsFallbackMethod', 'VoiceCallerIdLookup'),
 			'query' => false
 		),
 		'delete' => array(
