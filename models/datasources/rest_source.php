@@ -128,11 +128,17 @@ class RestSource extends DataSource {
 		} else {
 			$options['path'] = str_replace('/%s', '', $options['path']);
 		}
+		
+		if(isset($queryData['conditions']['run_as_account']) && isset($queryData['conditions']['run_as_account_token'])) {
+			$data = array(Inflector::classify('run_as_account')=>$queryData['conditions']['run_as_account'], Inflector::classify('run_as_account_token')=>$queryData['conditions']['run_as_account_token']);
+		} else {
+			$data = false;
+		}
+		
 		if (!$options) {
 			return false;
 		}
 		$query = false;
-		$data = false;
 		if (!empty($options['query']) && !empty($queryData['conditions'])) {
 			$query = $this->_parseQuery($model, $queryData['conditions'], $options['query']);
 		}
