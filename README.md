@@ -37,11 +37,27 @@ To run the a command as a different account, specify the Account Sid and Token i
 This one would find all incoming phone numbers for the specified account:
 
 ```php
-$incomingPhoneNumbersModel->find('all', array('conditions' => array('run_as_account' => '[Account Sid]', 'run_as_account_token' => '[Account token]'));
+$incomingPhoneNumbersModel->find('all',
+	array(
+		'conditions' => array(
+			'run_as_account' => '[Account Sid]',
+			'run_as_account_token' => '[Account token]'
+		)
+	)
+);
 ```
 
 This one would create a call for the specified account:
 
 ```php
-$callsModel->save(array('to'=>'[Phone Number]', 'from'=>'Twilio Phone number', 'url'=>'The next URL the TwiML should be pulled from', 'status_callback'=>'The url that the final data report should be sent to (twilio sends this after the call hangs up)', 'run_as_account' => '[Account Sid]', 'run_as_account_token' => '[Account token]'));
+$callsModel->save(
+	array(
+		'to'=>'[Phone Number]',
+		'from'=>'Twilio Phone number',
+		'url'=>'[The next URL the TwiML should be pulled from]',
+		'status_callback'=>'[The url that the final data report should be sent to (twilio sends this after the call hangs up)]',
+		'run_as_account' => '[Account Sid]',
+		'run_as_account_token' => '[Account token]'
+	)
+);
 ```
