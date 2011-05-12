@@ -55,7 +55,7 @@ $callsModel->save(
 		'to'=>'[Phone Number]',
 		'from'=>'Twilio Phone number',
 		'url'=>'[The next URL the TwiML should be pulled from]',
-		'status_callback'=>'[The url that the final data report should be sent to (twilio sends this after the call hangs up)]',
+		'status_callback'=>'[Final data report url (twilio sends this after the call hangs up)]',
 		'run_as_account' => '[Account Sid]',
 		'run_as_account_token' => '[Account token]'
 	)
