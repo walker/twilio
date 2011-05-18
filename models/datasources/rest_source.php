@@ -123,16 +123,12 @@ class RestSource extends DataSource {
 	 */
 	public function read(&$model, $queryData = array()) {
 		$options = $this->_checkCrud($model, 'read');
+		$data = array();
+		
 		if (isset($queryData['conditions']['sid']) && empty($queryData['conditions']['sid'])) {
 			$options['path'] = sprintf($options['path'], $queryData['conditions']['sid']);
 		} else {
 			$options['path'] = str_replace('/%s', '', $options['path']);
-		}
-		
-		if(isset($queryData['conditions']['run_as_account']) && isset($queryData['conditions']['run_as_account_token'])) {
-			$data = array(Inflector::classify('run_as_account')=>$queryData['conditions']['run_as_account'], Inflector::classify('run_as_account_token')=>$queryData['conditions']['run_as_account_token']);
-		} else {
-			$data = false;
 		}
 		
 		if (!$options) {
@@ -231,7 +227,13 @@ class RestSource extends DataSource {
 			$this->config['password'] = $data['RunAsAccountToken'];
 			unset($data['RunAsAccount']);
 			unset($data['RunAsAccountToken']);
+		} else if(isset($query['RunAsAccount']) && isset($query['RunAsAccountToken'])) {
+			$this->config['username'] = $query['RunAsAccount'];
+			$this->config['password'] = $query['RunAsAccountToken'];
+			unset($query['RunAsAccount']);
+			unset($query['RunAsAccountToken']);
 		}
+		
 		$request = array(
 			'method' => $method,
 			'uri' => array(
@@ -352,8 +354,10 @@ class RestSource extends DataSource {
 		}
 		$ret = array();
 		foreach ($conditions as $key => $value) {
-			if (in_array($key, $valid)) {
-				$ret[$key] = $value;
+			if(Inflector::classify($key)=='RunAsAccount' || Inflector::classify($key)=='RunAsAccountToken') {
+				$ret[Inflector::classify($key)] = $value;
+			} else if (in_array(Inflector::classify($key), $valid)) {
+				$ret[Inflector::classify($key)] = $value;
 			}
 		}
 		return $ret;
