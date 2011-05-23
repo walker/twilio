@@ -20,7 +20,7 @@ class Calls extends TwilioAppModel {
 			'allowed' => true,
 			'path' => '/Calls/%s',
 			'data' => false,
-			'query' => array('To', 'From', 'Status', 'StartTime', 'EndTime')
+			'query' => array('To', 'From', 'Status', 'StartTime', 'StartTime>', 'StartTime<', 'EndTime')
 		),
 		'create' => array(
 			'allowed' => true,
