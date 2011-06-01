@@ -234,6 +234,17 @@ class RestSource extends DataSource {
 			unset($query['RunAsAccountToken']);
 		}
 		
+		if(isset($data['Ext']) && isset($data['Type'])) {
+			$this->config['ext'] = $data['Ext'];
+			$this->config['type'] = $data['Type'];
+			unset($data['Type']);
+		} else if(isset($query['Ext']) && isset($query['Type'])) {
+			$this->config['ext'] =  $query['Ext'];
+			$this->config['type'] =  $query['Type'];
+			unset($query['Ext']);
+			unset($query['Type']);
+		}
+		
 		$request = array(
 			'method' => $method,
 			'uri' => array(
@@ -264,6 +275,7 @@ class RestSource extends DataSource {
 			case 'xml':
 				return $this->_parseXml($response);
 			break;
+			case 'csv':
 			default:
 				return $response;
 		}
